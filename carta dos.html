@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Para Ti ❤️</title>
+    <!-- Importamos la fuente cursiva para la carta -->
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* --- ESTILOS GENERALES --- */
+        body, html {
+            margin: 0; padding: 0;
+            width: 100%; 
+            min-height: 100vh; /* Cambiado a min-height para permitir scroll */
+            background-color: #2b0a11; /* Tu fondo original */
+            background-image: radial-gradient(circle, #4a1520 0%, #1a050a 100%);
+            
+            /* Habilitamos el scroll vertical nativo de la página */
+            overflow-x: hidden;
+            overflow-y: auto; 
+            
+            display: flex; 
+            flex-direction: column; /* Permite que el pergamino crezca hacia abajo */
+            align-items: center; /* Centra el pergamino */
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* --- LLUVIA DE CORAZONES --- */
+        .rain-container {
+            /* Fix para que la lluvia siga cubriendo la pantalla aunque bajes (scroll) */
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            pointer-events: none; z-index: 1; 
+        }
+        .rain-heart {
+            position: absolute; color: #ff4d6d;
+            opacity: 0; animation: fall linear infinite;
+        }
+        @keyframes fall {
+            0% { transform: translateY(-10vh) rotate(0deg); opacity: 0; }
+            10% { opacity: 0.6; }
+            90% { opacity: 0.6; }
+            100% { transform: translateY(110vh) rotate(360deg); opacity: 0; }
+        }
+
+        /* --- PANTALLA INICIAL (Para desbloquear el audio) --- */
+        #pantalla-inicio {
+            position: fixed; /* Cambiado a fixed para cubrir todo siempre */
+            top: 0; left: 0;
+            z-index: 50;
+            width: 100vw; height: 100vh;
+            background: rgba(0, 0, 0, 0.6);
+            display: flex; flex-direction: column;
+            justify-content: center; align-items: center;
+            color: white; font-family: 'Dancing Script', cursive;
+            cursor: pointer; transition: opacity 1s ease;
+            backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px);
+        }
+        #pantalla-inicio h1 {
+            font-size: 3.5rem; margin: 0;
+            text-shadow: 0 0 20px rgba(255, 77, 109, 0.8);
+            animation: latido 2s infinite;
+        }
+        #pantalla-inicio p {
+            font-size: 1.5rem; color: #ffb3c1;
+        }
+        @keyframes latido {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        /* --- LA CARTA (ESTILO PAPIRO/PAPEL ANTIGUO) --- */
+        #carta-container {
+            position: relative; z-index: 10;
+            width: 90%; max-width: 550px;
+            /* Margen arriba y abajo para que respire al escrolear */
+            margin: 60px auto; 
+            opacity: 0; transform: translateY(30px) scale(0.95);
+            transition: all 1.5s ease 0.5s; /* Animación de entrada suave */
+            display: none; /* Oculto inicialmente */
+        }
+
+        .papiro {
+            /* Efecto de papel antiguo con textura integrada */
+            background-color: #f4e4bc;
+            background-image: 
+                linear-gradient(to right, rgba(232, 208, 157, 0.8) 0%, rgba(253, 245, 230, 0.9) 10%, rgba(253, 245, 230, 0.9) 90%, rgba(232, 208, 157, 0.8) 100%),
+                url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.15'/%3E%3C/svg%3E");
+            
+            /* Curvas mágicas: esto hace que los bordes sean irregulares y ondulados */
+            border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
+            
+            /* Sombras: quemado interno intenso + sombra exterior */
+            box-shadow: 
+                8px 15px 30px rgba(0,0,0,0.6), /* Sombra proyectada */
+                inset 0 0 60px rgba(139, 69, 19, 0.4), /* Quemado interior suave */
+                inset 0 0 15px rgba(60, 20, 0, 0.3); /* Borde chamuscado oscuro */
+            
+            padding: 60px 40px;
+            color: #3e2723; /* Color de tinta marrón oscuro */
+            font-family: 'Dancing Script', cursive;
+            text-align: center;
+        }
+
+        /* Textos de la carta */
+        .titulo-carta {
+            font-size: 3rem; color: #5d4037;
+            margin-top: 0; margin-bottom: 25px;
+            border-bottom: 2px solid rgba(139, 69, 19, 0.2);
+            padding-bottom: 10px;
+        }
+        
+        .texto-carta {
+            font-size: 1.8rem; line-height: 1.6;
+            margin-bottom: 20px; text-align: left;
+            text-shadow: 1px 1px 1px rgba(255,255,255,0.4); /* Efecto de tinta absorbida */
+        }
+
+        .firma {
+            font-size: 2.2rem; font-weight: bold;
+            text-align: right; margin-top: 40px; color: #4e342e;
+        }
+
+        @media (max-width: 480px) {
+            .papiro { padding: 40px 25px; }
+            .texto-carta { font-size: 1.6rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Lluvia de corazones en el fondo -->
+    <div class="rain-container" id="rain-bg"></div>
+
+    <!-- PANTALLA INICIAL PARA ACTIVAR MÚSICA -->
+    <div id="pantalla-inicio" onclick="abrirCarta()">
+        <h1>Para Ti... ❤️</h1>
+        <p>(Toca la pantalla para abrir)</p>
+    </div>
+
+    <!-- CONTENEDOR DE LA CARTA -->
+    <div id="carta-container">
+        <div class="papiro">
+            <!-- ⚠️ AQUÍ ESCRIBES TU CARTA ⚠️ -->
+            <h2 class="titulo-carta">Mi Amor,</h2>
+            
+            <div class="texto-carta">
+		Es difícil encontrar las palabras exactas para cerrar un capítulo tan importante, pero sentía que debíamos tener este cierre. Esta es mi última carta para ti, y quiero que 		sepas que está escrita sin reproches, desde la más profunda honestidad y tranquilidad.
+		<br><br>
+		Primero que todo, gracias. Gracias por cada instante, por el tiempo que me dedicaste y por todo lo que compartimos. Me llevo conmigo recuerdos invaluables y la paz de saber 		que te quise y te amé con todas mis fuerzas. Puse todo mi corazón, mi esfuerzo y mi dedicación en lo nuestro, y atesoraré siempre lo que construimos mientras duró.
+		<br><br>
+		Hoy las cosas son distintas y ese amor romántico ya tomó otro rumbo, pero se ha transformado en un cariño inmenso y un respeto sincero por ti. Mi deseo más grande ahora es 		que estés bien. Quiero verte brillar, quiero que logres todo lo que te propongas y que te conviertas en esa persona increíble que sé que estás destinada a ser, incluso si 		mi camino ya no va de la mano con el tuyo.
+		<br><br>
+		Quiero que te lleves una certeza absoluta: aunque nuestras vidas se separen aquí, si algún día el mundo se vuelve demasiado pesado y realmente necesitas un apoyo sincero, 		voy a estar ahí para ti. No como lo fuimos antes, sino como alguien que te conoce de verdad, que valora quién eres y que siempre querrá verte bien.
+		<br><br>
+		Cuídate mucho, persigue tus sueños y gracias por haber sido una parte tan especial de mi historia.
+                <br><br>
+                Prometo cuidarte y quererte aun que no estes.
+            </div>
+
+            <div class="firma">
+                Con todo mi amor y cariño,<br>
+                Tu sopaipilla❤️
+            </div>
+        </div>
+    </div>
+
+    <!-- MÚSICA OCULTA -->
+    <audio id="musica-amor" loop playsinline>
+        <!-- ⚠️ TU CANCIÓN ⚠️ -->
+        <source src="https://www.dropbox.com/scl/fi/dzr4twqo1ixcouloo4url/Ry-Cuming-Always-Remember-Me-Official-Video.mp3?rlkey=l96rbvgl2l7f85haa0mfk3251&st=w9hqg96t&raw=1" type="audio/mpeg">
+    </audio>
+
+    <script>
+        // --- 1. FUNCIÓN PARA ABRIR CARTA Y REPRODUCIR MÚSICA ---
+        function abrirCarta() {
+            // Desvanecer la pantalla de inicio
+            const inicio = document.getElementById('pantalla-inicio');
+            inicio.style.opacity = '0';
+            
+            // Iniciar la música
+            const audio = document.getElementById('musica-amor');
+            audio.volume = 0.5;
+            audio.play().catch(e => console.log("Error al reproducir audio:", e));
+
+            // Mostrar la carta con animación
+            const carta = document.getElementById('carta-container');
+            carta.style.display = 'block';
+            
+            // Un pequeño retraso para que la transición de CSS funcione
+            setTimeout(() => {
+                carta.style.opacity = '1';
+                carta.style.transform = 'translateY(0) scale(1)';
+            }, 50);
+
+            // Eliminar la pantalla de inicio del código después de 1 segundo para no estorbar
+            setTimeout(() => {
+                inicio.style.display = 'none';
+            }, 1000);
+        }
+
+        // --- 2. LLUVIA DE CORAZONES ---
+        function crearLluvia() {
+            const container = document.getElementById('rain-bg');
+            const simbolos = ['❤', '♥', '💕']; 
+            
+            setInterval(() => {
+                const h = document.createElement('div');
+                h.classList.add('rain-heart');
+                h.innerHTML = simbolos[Math.floor(Math.random() * simbolos.length)];
+                
+                h.style.left = Math.random() * 100 + 'vw';
+                h.style.animationDuration = (Math.random() * 4 + 4) + 's';
+                h.style.fontSize = (Math.random() * 1.5 + 1) + 'rem';
+                
+                container.appendChild(h);
+                
+                setTimeout(() => h.remove(), 8000);
+            }, 350); 
+        }
+        
+        crearLluvia();
+    </script>
+</body>
+</html>
